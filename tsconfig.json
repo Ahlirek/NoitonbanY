@@ -4,6 +4,8 @@
       "target": "esnext",
       "sourceMap": true,
       "outDir": "dist",
+      "types": ["jest"],
+      "allowImportingTsExtensions": true
   },
   "include": ["src/**/*"],
   "exclude": ["dist"]

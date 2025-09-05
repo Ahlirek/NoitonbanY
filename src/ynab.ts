@@ -64,12 +64,10 @@ interface YnabSubTransaction {
   await saveObjectToJsonFile(transactions, 'transactions');
   const transactionsServerKnowledge =
     transactionsResponse.data.server_knowledge;
-  // console.log(transactions[10]);
+  // const transaction = transactions[11];
   // console.log(transactions[11]);
   // console.log(transactions.length);
   // console.log(transactionsServerKnowledge);
-  //
-  // const transaction = transactions[11];
   const transaction: YnabTransaction = {
     id: 'c38fb781-dd16-4a3d-afb5-ea6bb7d6f7da',
     date: '2023-09-23',
@@ -314,7 +312,8 @@ async function createNotionChildPage(
       },
       //create a function to create the requests in an array
     });
-    console.log(childPageResponse);
+    const cleanNotionChildRequestObject = cleanObject(childPageResponse);
+    console.log(cleanNotionChildRequestObject);
   }
   //INFO: https://chat.deepseek.com/a/chat/s/b329d24e-479f-4ec4-be4a-c96e2d3675b1
   // https://developers.notion.com/reference/property-object#relation
@@ -324,7 +323,7 @@ async function createNotionChildPage(
 }
 // TODO create a jest test that test that the function creates a request with all data
 
-function cleanObject(obj: object) {
+export function cleanObject(obj: object) {
   const newObj = {};
   for (const key of Object.keys(obj)) {
     const value = obj[key];
@@ -332,6 +331,16 @@ function cleanObject(obj: object) {
       const cleanedValue = cleanObject(value);
       if (Object.keys(cleanedValue).length > 0) {
         newObj[key] = cleanedValue;
+      }
+    } else if (Array.isArray(value)) {
+      if (value.length === 0) {
+        continue;
+      }
+      for (const el of value) {
+        const cleanedValue = cleanObject(el);
+        if (Object.keys(cleanedValue).length > 0) {
+          newObj[key] = cleanedValue;
+        }
       }
     } else if (value !== undefined) {
       newObj[key] = value;
